@@ -1763,7 +1763,6 @@ function initSidebar() {
     <!-- رأس الـ Sidebar -->
     <div class="sidebar-header">
       <div class="sidebar-header-top">
-        <span class="sidebar-brand-text">POS DZ</span>
         <button class="sidebar-close-btn" id="sidebarCloseBtn" title="إغلاق">
           <i class="fa-solid fa-xmark"></i>
         </button>
