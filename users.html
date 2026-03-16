@@ -553,10 +553,6 @@
         <i class="fa-solid fa-user-plus"></i>
         <span>إضافة مستخدم</span>
       </button>
-      <button class="btn btn-secondary" onclick="openRecoverySetupModal()" title="إعداد سؤال الاسترداد للمدير" style="margin-right:8px;">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>سؤال الاسترداد</span>
-      </button>
     </div>
 
     <!-- بطاقات الإحصائيات -->
@@ -571,6 +567,10 @@
       <button class="tab-modern" onclick="switchTab('logs')">
         <i class="fa-solid fa-clock-rotate-left"></i>
         <span>سجل النشاطات</span>
+      </button>
+      <button class="tab-modern" onclick="switchTab('security')">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>الأمان</span>
       </button>
     </div>
 
@@ -635,10 +635,180 @@
         </div>
       </div>
     </div>
+
+    <!-- ========== تبويب: الأمان ========== -->
+    <div class="tab-content" id="tab-security">
+
+      <div class="card" style="max-width:660px; margin:0 auto;">
+        <h4>
+          <i class="fa-solid fa-shield-halved"></i>
+          إعداد استرداد كلمة مرور المدير الرئيسي
+        </h4>
+
+        <div class="alert alert-info">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>
+            يُستخدم هذا القسم لضبط آلية الاسترداد في حال نسيان كلمة مرور المدير.
+            يظهر الاسترداد في صفحة الدخول عند الضغط على <strong>«نسيت الرقم السري؟»</strong>.
+          </span>
+        </div>
+
+        <!-- ─── سؤال الأمان ─── -->
+        <div style="border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:14px; background:var(--bg-dark);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="width:38px;height:38px;border-radius:50%;background:rgba(124,58,237,0.13);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:1.05rem;flex-shrink:0;">
+              <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:800; color:var(--text-primary);">سؤال الأمان</div>
+              <div style="font-size:0.78rem;color:var(--text-secondary);">يُطلب الإجابة عليه عند محاولة استرداد كلمة المرور</div>
+            </div>
+            <div id="secQBadge"></div>
+          </div>
+
+          <div class="input-group">
+            <label class="input-label">
+              <i class="fa-solid fa-comment-dots"></i> نص السؤال
+            </label>
+            <input type="text" class="input-field" id="secQ"
+                   placeholder="مثال: ما اسم أول مدرسة التحقت بها؟"
+                   autocomplete="off"/>
+          </div>
+
+          <div class="input-group" style="margin-bottom:0;">
+            <label class="input-label">
+              <i class="fa-solid fa-pen-to-square"></i> الإجابة السرية
+              <span style="font-size:0.68rem;color:var(--text-secondary);font-weight:600;">(ستُشفَّر — غير حساسة لحالة الأحرف)</span>
+            </label>
+            <input type="text" class="input-field" id="secA"
+                   placeholder="أدخل إجابتك"
+                   autocomplete="off"/>
+          </div>
+        </div>
+
+        <!-- ─── رمز الطوارئ ─── -->
+        <div style="border:1px solid var(--border); border-radius:var(--radius); padding:18px; margin-bottom:18px; background:var(--bg-dark);">
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+            <div style="width:38px;height:38px;border-radius:50%;background:rgba(245,158,11,0.12);display:flex;align-items:center;justify-content:center;color:var(--warning);font-size:1.05rem;flex-shrink:0;">
+              <i class="fa-solid fa-barcode"></i>
+            </div>
+            <div style="flex:1;">
+              <div style="font-weight:800; color:var(--text-primary);">رمز الطوارئ</div>
+              <div style="font-size:0.78rem;color:var(--text-secondary);">احتياطي عند غياب سؤال الأمان أو نسيان إجابته</div>
+            </div>
+            <div id="secEBadge"></div>
+          </div>
+
+          <div class="input-group" style="margin-bottom:10px;">
+            <label class="input-label">
+              <i class="fa-solid fa-key"></i> الرمز
+            </label>
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="input-field" id="secE"
+                     placeholder="XXXX-XXXX-XXXX-XXXX"
+                     dir="ltr" autocomplete="off"
+                     style="text-align:center;letter-spacing:3px;font-family:monospace,var(--font-main);"
+                     oninput="secFmt(this)"/>
+              <button class="btn btn-ghost" onclick="secGen()" title="توليد رمز عشوائي">
+                <i class="fa-solid fa-dice"></i> توليد
+              </button>
+              <button class="btn btn-ghost" onclick="secCopy()" id="secCopyBtn" title="نسخ">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="alert alert-warning" style="padding:9px 13px;font-size:0.8rem;margin-bottom:0;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>احتفظ بهذا الرمز خارج النظام — لن تتمكن من رؤيته بعد الحفظ</span>
+          </div>
+        </div>
+
+        <!-- ─── أزرار ─── -->
+        <div style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="secRefresh()">
+            <i class="fa-solid fa-rotate"></i> تحديث الحالة
+          </button>
+          <button class="btn btn-success" onclick="secSave()">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ إعدادات الأمان
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /tab-security -->
+
   </div>
 </div>
 
-<!-- ========== Modal: إضافة/تعديل مستخدم ========== -->
+<!-- ========== Modal: تغيير كلمة المرور — موحد ========== -->
+<div class="modal-overlay" id="changePwdModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title" id="cpTitle">
+        <i class="fa-solid fa-key"></i> تغيير كلمة المرور
+      </span>
+      <button class="modal-close" onclick="closeModal('changePwdModal')">✕</button>
+    </div>
+    <input type="hidden" id="cpUid"/>
+
+    <!-- كلمة المرور الحالية (تظهر عند الحاجة فقط) -->
+    <div class="input-group" id="cpCurWrap">
+      <label class="input-label">
+        <i class="fa-solid fa-lock"></i> كلمة المرور الحالية
+      </label>
+      <div style="position:relative;">
+        <input type="password" class="input-field" id="cpCur"
+               placeholder="أدخل كلمة المرور الحالية"
+               style="padding-left:42px;"/>
+        <button type="button" onclick="cpEye('cpCur',this)"
+                style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text-secondary);cursor:pointer;padding:0;font-size:0.9rem;transition:color 0.2s;">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+      <div style="font-size:0.73rem;color:var(--text-secondary);margin-top:2px;" id="cpCurNote"></div>
+    </div>
+
+    <div class="input-group">
+      <label class="input-label">
+        <i class="fa-solid fa-lock-open"></i> كلمة المرور الجديدة
+      </label>
+      <div style="position:relative;">
+        <input type="password" class="input-field" id="cpNew"
+               placeholder="أدخل كلمة المرور الجديدة"
+               style="padding-left:42px;"
+               oninput="cpStr();cpMtch()"/>
+        <button type="button" onclick="cpEye('cpNew',this)"
+                style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:transparent;border:none;color:var(--text-secondary);cursor:pointer;padding:0;font-size:0.9rem;transition:color 0.2s;">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+      <div style="display:flex;gap:3px;margin-top:5px;">
+        <div style="height:3px;flex:1;border-radius:3px;background:var(--border);transition:background 0.3s;" id="cs1"></div>
+        <div style="height:3px;flex:1;border-radius:3px;background:var(--border);transition:background 0.3s;" id="cs2"></div>
+        <div style="height:3px;flex:1;border-radius:3px;background:var(--border);transition:background 0.3s;" id="cs3"></div>
+        <div style="height:3px;flex:1;border-radius:3px;background:var(--border);transition:background 0.3s;" id="cs4"></div>
+      </div>
+      <div style="font-size:0.73rem;margin-top:2px;" id="cpStrLbl"></div>
+    </div>
+
+    <div class="input-group" style="margin-bottom:0;">
+      <label class="input-label">
+        <i class="fa-solid fa-lock"></i> تأكيد كلمة المرور
+      </label>
+      <input type="password" class="input-field" id="cpConf"
+             placeholder="أعد إدخال كلمة المرور الجديدة"
+             oninput="cpMtch()"/>
+      <div style="font-size:0.73rem;margin-top:2px;" id="cpMtchLbl"></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-warning" onclick="cpSave()" id="cpSaveBtn">
+        <i class="fa-solid fa-key"></i> تغيير كلمة المرور
+      </button>
+      <button class="btn btn-secondary" onclick="closeModal('changePwdModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
 <div class="modal-overlay" id="userModal">
   <div class="modal">
     <div class="modal-header">
@@ -707,102 +877,6 @@
       <button class="btn btn-secondary" onclick="closeModal('userModal')">
         إلغاء
       </button>
-    </div>
-  </div>
-</div>
-
-<!-- ========== Modal: تغيير كلمة المرور (لأي مستخدم) ========== -->
-<div class="modal-overlay" id="changePasswordModal">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <span class="modal-title" id="changePwdTitle">
-        <i class="fa-solid fa-key"></i> تغيير كلمة المرور
-      </span>
-      <button class="modal-close" onclick="closeModal('changePasswordModal')">✕</button>
-    </div>
-
-    <input type="hidden" id="changePwdUserId"/>
-
-    <div id="changePwdCurrentWrap" class="form-group">
-      <label class="form-label">🔑 كلمة المرور الحالية</label>
-      <input type="password" class="form-input" id="changePwdCurrent" 
-             placeholder="أدخل كلمة المرور الحالية"/>
-      <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;" id="changePwdCurrentNote"></div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">🔒 كلمة المرور الجديدة</label>
-      <input type="password" class="form-input" id="changePwdNew" 
-             placeholder="أدخل كلمة المرور الجديدة"
-             oninput="checkChangePwdStrength()"/>
-      <div class="password-strength" id="changePwdStrength"></div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">🔒 تأكيد كلمة المرور الجديدة</label>
-      <input type="password" class="form-input" id="changePwdConfirm" 
-             placeholder="أعد إدخال كلمة المرور الجديدة"
-             oninput="checkChangePwdMatch()"/>
-      <div class="password-strength" id="changePwdMatch"></div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-warning" onclick="saveChangedPassword()">
-        <i class="fa-solid fa-key"></i> تغيير
-      </button>
-      <button class="btn btn-secondary" onclick="closeModal('changePasswordModal')">
-        إلغاء
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- ========== Modal: إعداد سؤال الاسترداد للمدير ========== -->
-<div class="modal-overlay" id="recoverySetupModal">
-  <div class="modal modal-sm">
-    <div class="modal-header">
-      <span class="modal-title">
-        <i class="fa-solid fa-shield-halved"></i> إعداد الاسترداد للمدير
-      </span>
-      <button class="modal-close" onclick="closeModal('recoverySetupModal')">✕</button>
-    </div>
-
-    <div style="background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2); border-radius:var(--radius-sm); padding:12px; margin-bottom:16px; font-size:0.83rem; color:var(--text-secondary); line-height:1.6;">
-      <strong>🔐 ماهو هذا؟</strong><br>
-      يتيح لك ضبط <strong>سؤال أمان</strong> يُستخدم عند نسيان كلمة مرور المدير.
-      كما يمكنك تعيين <strong>رمز طوارئ</strong> احتياطي للدخول في حالات استثنائية.
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">❓ سؤال الأمان (مثال: ما اسم أول مدرسة التحقت بها؟)</label>
-      <input type="text" class="form-input" id="recoveryQuestion" 
-             placeholder="اكتب سؤالاً يسهل عليك تذكر إجابته" autocomplete="off"/>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">💡 إجابة سؤال الأمان</label>
-      <input type="text" class="form-input" id="recoveryAnswer" 
-             placeholder="الإجابة (غير حساسة لحالة الأحرف)" autocomplete="off"/>
-      <div style="font-size:0.75rem; color:var(--text-secondary); margin-top:4px;">سيتم تشفير الإجابة وحفظها بأمان</div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">🔐 رمز الطوارئ (Emergency Code) — اختياري</label>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <input type="text" class="form-input" id="emergencyCode" 
-               placeholder="اكتب رمزاً أو اضغط توليد" autocomplete="off" style="flex:1;"/>
-        <button class="btn btn-secondary" onclick="generateEmergencyCode()" style="white-space:nowrap; padding:10px 14px;">
-          <i class="fa-solid fa-dice"></i> توليد
-        </button>
-      </div>
-      <div style="font-size:0.75rem; color:var(--warning); margin-top:4px;">⚠️ احتفظ بهذا الرمز في مكان آمن — لن يُعرض مجدداً</div>
-    </div>
-
-    <div class="modal-footer">
-      <button class="btn btn-success" onclick="saveRecoverySetup()">
-        <i class="fa-solid fa-floppy-disk"></i> حفظ الإعدادات
-      </button>
-      <button class="btn btn-secondary" onclick="closeModal('recoverySetupModal')">إلغاء</button>
     </div>
   </div>
 </div>
@@ -948,9 +1022,8 @@ function switchTab(tabId) {
   document.querySelector(`[onclick="switchTab('${tabId}')"]`).classList.add('active');
   document.getElementById(`tab-${tabId}`).classList.add('active');
   
-  if (tabId === 'logs') {
-    renderLogs();
-  }
+  if (tabId === 'logs')     renderLogs();
+  if (tabId === 'security') secRefresh();
 }
 
 // ============================================================
@@ -1047,14 +1120,14 @@ function renderUsers() {
 
         <div class="user-actions">
           ${user.role === 'admin' ? `
-            <button class="action-btn warning" onclick="openChangePasswordModal(${user.id})">
+            <button class="action-btn warning" onclick="openChangePwd(${user.id})">
               <i class="fa-solid fa-key"></i> تغيير كلمة المرور
             </button>
           ` : `
             <button class="action-btn primary" onclick="editUser(${user.id})">
               <i class="fa-solid fa-pen"></i> تعديل
             </button>
-            <button class="action-btn warning" onclick="openChangePasswordModal(${user.id})" title="تغيير كلمة المرور">
+            <button class="action-btn warning" onclick="openChangePwd(${user.id})" title="تغيير كلمة المرور">
               <i class="fa-solid fa-key"></i>
             </button>
             <button class="action-btn danger" onclick="deleteUser(${user.id})">
@@ -1270,184 +1343,151 @@ async function deleteUser(id) {
 }
 
 // ============================================================
-//  تغيير كلمة المرور (لأي مستخدم — نمط المدير)
+//  تغيير كلمة المرور — موحد (modal-overlay من style.css)
 // ============================================================
-let changePwdTargetUser = null;
+let _cpU = null;
 
-async function openChangePasswordModal(userId) {
+async function openChangePwd(userId) {
   const user = allUsers.find(u => u.id === userId);
   if (!user) return;
-  changePwdTargetUser = user;
+  _cpU = user;
 
-  const isOwnAccount = currentUser && currentUser.id === userId;
-  const isAdmin      = user.role === 'admin';
+  const needCur = user.role === 'admin' || (currentUser?.id === userId);
 
-  // تحديد هل يحتاج إدخال كلمة المرور الحالية
-  const needCurrent = isAdmin || isOwnAccount;
-
-  document.getElementById('changePwdUserId').value = userId;
-  document.getElementById('changePwdTitle').innerHTML =
+  document.getElementById('cpUid').value  = userId;
+  document.getElementById('cpTitle').innerHTML =
     `<i class="fa-solid fa-key"></i> تغيير كلمة مرور: ${window.sanitizer.escape(user.username)}`;
 
-  const currentWrap = document.getElementById('changePwdCurrentWrap');
-  const currentNote = document.getElementById('changePwdCurrentNote');
+  const wrap = document.getElementById('cpCurWrap');
+  document.getElementById('cpCurNote').textContent = needCur
+    ? (user.role === 'admin' ? 'مطلوب لأنك تغيّر كلمة مرور المدير' : 'مطلوب لأنك تغيّر كلمة مرور حسابك الخاص')
+    : '';
+  wrap.style.display = needCur ? '' : 'none';
 
-  if (needCurrent) {
-    currentWrap.style.display = 'flex';
-    currentNote.textContent   = isAdmin
-      ? '🔐 مطلوب للتأكيد على هويتك (أنت المدير)'
-      : '🔐 مطلوب لأنك تغيّر كلمة مرور حسابك الخاص';
-  } else {
-    // المدير يغيّر كلمة مرور مستخدم آخر ← لا يحتاج كلمة مرور القديمة
-    currentWrap.style.display = 'none';
+  ['cpCur','cpNew','cpConf'].forEach(id => document.getElementById(id).value='');
+  ['cs1','cs2','cs3','cs4'].forEach(id => document.getElementById(id).style.background='var(--border)');
+  document.getElementById('cpStrLbl').textContent='';
+  document.getElementById('cpMtchLbl').textContent='';
+
+  window.modalManager.open('changePwdModal');
+  setTimeout(() => document.getElementById(needCur ? 'cpCur' : 'cpNew')?.focus(), 180);
+}
+
+function cpEye(id, btn) {
+  const inp = document.getElementById(id), ic = btn.querySelector('i');
+  inp.type = inp.type==='password' ? 'text' : 'password';
+  ic.className = inp.type==='password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+}
+
+function cpStr() {
+  const p = document.getElementById('cpNew').value;
+  const C = ['var(--danger)','var(--warning)','#3B82F6','var(--success)'];
+  const L = ['ضعيفة','متوسطة','جيدة','قوية 💪'];
+  if (!p) { ['cs1','cs2','cs3','cs4'].forEach(id=>document.getElementById(id).style.background='var(--border)'); document.getElementById('cpStrLbl').textContent=''; return; }
+  let s=0; if(p.length>=6)s++; if(p.match(/[a-zA-Z]/))s++; if(p.match(/[0-9]/))s++; if(p.match(/[^a-zA-Z0-9]/))s++;
+  s=Math.max(0,s-1);
+  ['cs1','cs2','cs3','cs4'].forEach((id,i)=>document.getElementById(id).style.background=i<=s?C[s]:'var(--border)');
+  document.getElementById('cpStrLbl').innerHTML=`<span style="color:${C[s]};">● ${L[s]}</span>`;
+}
+
+function cpMtch() {
+  const p=document.getElementById('cpNew').value, c=document.getElementById('cpConf').value, el=document.getElementById('cpMtchLbl');
+  if(!c){el.textContent='';return;}
+  el.innerHTML=p===c?'<span style="color:var(--success);"><i class="fa-solid fa-check"></i> متطابقتان</span>':'<span style="color:var(--danger);"><i class="fa-solid fa-xmark"></i> غير متطابقتين</span>';
+}
+
+async function cpSave() {
+  if (!_cpU) return;
+  const newP=document.getElementById('cpNew').value, conf=document.getElementById('cpConf').value, cur=document.getElementById('cpCur').value;
+  const needCur = document.getElementById('cpCurWrap').style.display !== 'none';
+
+  if (!newP)       { window.toast.show('⚠ كلمة المرور الجديدة مطلوبة','warning'); return; }
+  if (newP.length<4){ window.toast.show('⚠ 4 أحرف على الأقل','warning'); return; }
+  if (newP!==conf) { window.toast.show('❌ كلمتا المرور غير متطابقتين','warning'); return; }
+  if (needCur) {
+    if (!cur) { window.toast.show('⚠ كلمة المرور الحالية مطلوبة','warning'); return; }
+    const ok = await window.passwordManager.verify(cur, _cpU.password);
+    if (!ok) { window.toast.show('❌ كلمة المرور الحالية غير صحيحة','error'); return; }
   }
 
-  document.getElementById('changePwdCurrent').value  = '';
-  document.getElementById('changePwdNew').value      = '';
-  document.getElementById('changePwdConfirm').value  = '';
-  document.getElementById('changePwdStrength').innerHTML = '';
-  document.getElementById('changePwdMatch').innerHTML    = '';
-
-  window.modalManager.open('changePasswordModal');
-}
-
-function checkChangePwdStrength() {
-  const p  = document.getElementById('changePwdNew').value;
-  const el = document.getElementById('changePwdStrength');
-  if (!p) { el.innerHTML = ''; return; }
-  let s = 0;
-  if (p.length >= 6) s++;
-  if (p.match(/[a-zA-Z]/)) s++;
-  if (p.match(/[0-9]/)) s++;
-  if (p.match(/[^a-zA-Z0-9]/)) s++;
-  const labels = [
-    '<span class="strength-weak">ضعيفة جداً</span>',
-    '<span class="strength-weak">ضعيفة</span>',
-    '<span class="strength-medium">متوسطة</span>',
-    '<span class="strength-strong">جيدة</span>',
-    '<span class="strength-strong">قوية جداً ✓</span>'
-  ];
-  el.innerHTML = 'القوة: ' + labels[Math.min(s, 4)];
-}
-
-function checkChangePwdMatch() {
-  const p  = document.getElementById('changePwdNew').value;
-  const c  = document.getElementById('changePwdConfirm').value;
-  const el = document.getElementById('changePwdMatch');
-  if (!c) { el.innerHTML = ''; return; }
-  el.innerHTML = p === c
-    ? '<span class="strength-strong">✓ متطابقة</span>'
-    : '<span class="strength-weak">✗ غير متطابقة</span>';
-}
-
-async function saveChangedPassword() {
-  if (!changePwdTargetUser) return;
-
-  const userId      = parseInt(document.getElementById('changePwdUserId').value);
-  const newPass     = document.getElementById('changePwdNew').value;
-  const confirmPass = document.getElementById('changePwdConfirm').value;
-  const currentPass = document.getElementById('changePwdCurrent').value;
-  const needCurrent = document.getElementById('changePwdCurrentWrap').style.display !== 'none';
-
-  if (!newPass) { window.toast.show('كلمة المرور الجديدة مطلوبة', 'warning'); return; }
-  if (newPass.length < 4) { window.toast.show('كلمة المرور قصيرة جداً (4 أحرف على الأقل)', 'warning'); return; }
-  if (newPass !== confirmPass) { window.toast.show('كلمة المرور غير متطابقة', 'warning'); return; }
-
-  if (needCurrent) {
-    if (!currentPass) { window.toast.show('كلمة المرور الحالية مطلوبة', 'warning'); return; }
-    const isValid = await window.passwordManager.verify(currentPass, changePwdTargetUser.password);
-    if (!isValid) { window.toast.show('كلمة المرور الحالية غير صحيحة', 'error'); return; }
-  }
-
+  const btn=document.getElementById('cpSaveBtn');
+  btn.classList.add('loading'); btn.innerHTML='<i class="fa-solid fa-spinner"></i> جاري الحفظ...';
   try {
-    changePwdTargetUser.password  = await window.passwordManager.hash(newPass);
-    changePwdTargetUser.updatedAt = window.dateUtils.now();
-    await window.dbManager.put('users', changePwdTargetUser);
-
-    await window.dbManager.add('logs', {
-      action: 'password_change',
-      userId: currentUser?.id,
-      details: `تغيير كلمة مرور: ${changePwdTargetUser.username}`,
-      date: window.dateUtils.now()
-    });
-
-    window.modalManager.close('changePasswordModal');
-    window.toast.show(`✅ تم تغيير كلمة مرور "${changePwdTargetUser.username}" بنجاح`, 'success');
+    _cpU.password  = await window.passwordManager.hash(newP);
+    _cpU.updatedAt = window.dateUtils.now();
+    await window.dbManager.put('users', _cpU);
+    await window.dbManager.add('logs',{action:'password_change',userId:currentUser?.id,details:`تغيير كلمة مرور: ${_cpU.username}`,date:window.dateUtils.now()});
+    btn.classList.remove('loading');
+    window.modalManager.close('changePwdModal');
+    window.toast.show(`✅ تم تغيير كلمة مرور "${_cpU.username}"`, 'success');
     await loadAllData();
-  } catch (e) {
-    window.toast.show('فشل في تغيير كلمة المرور', 'error');
+  } catch(e) {
+    btn.classList.remove('loading'); btn.innerHTML='<i class="fa-solid fa-key"></i> تغيير كلمة المرور';
+    window.toast.show('❌ فشل في تغيير كلمة المرور','error');
   }
 }
 
 // للتوافق مع الكود القديم
-function openAdminPasswordModal() {
-  const admin = allUsers.find(u => u.role === 'admin');
-  if (admin) openChangePasswordModal(admin.id);
-}
+function openAdminPasswordModal(){ const a=allUsers.find(u=>u.role==='admin'); if(a) openChangePwd(a.id); }
+function checkNewPasswordStrength(){}
+function checkNewPasswordMatch(){}
+async function changeAdminPassword(){ await cpSave(); }
 
 // ============================================================
-//  إعداد سؤال الاسترداد
+//  تبويب الأمان — إعداد استرداد المدير
 // ============================================================
-async function openRecoverySetupModal() {
-  // تحميل القيم الحالية إن وُجدت
+async function secRefresh() {
+  // السؤال
+  let qOk=false, eOk=false;
+  try { const q=await window.dbManager.get('settings','recoveryQuestion'), a=await window.dbManager.get('settings','recoveryAnswer'); if(q?.value&&a?.value){qOk=true;document.getElementById('secQ').value=q.value;} } catch(_){}
+  // الرمز
+  try { const e=await window.dbManager.get('settings','emergencyCode'); eOk=!!e?.value; } catch(_){}
+
+  const qb=document.getElementById('secQBadge'), eb=document.getElementById('secEBadge');
+  if(qb) qb.innerHTML=qOk?'<span class="badge badge-success"><i class="fa-solid fa-check"></i> مُعدَّ</span>':'<span class="badge badge-warning"><i class="fa-solid fa-minus"></i> غير مُعدَّ</span>';
+  if(eb) eb.innerHTML=eOk?'<span class="badge badge-success"><i class="fa-solid fa-check"></i> موجود</span>':'<span class="badge badge-neutral"><i class="fa-solid fa-minus"></i> غير مُعيَّن</span>';
+
+  document.getElementById('secA').value='';
+  document.getElementById('secE').value='';
+}
+
+function secFmt(inp) {
+  let v=inp.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,16), o='';
+  for(let i=0;i<v.length;i++){if(i>0&&i%4===0)o+='-';o+=v[i];} inp.value=o;
+}
+
+function secGen() {
+  const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let r='';
+  for(let i=0;i<16;i++){if(i>0&&i%4===0)r+='-'; r+=c[Math.floor(Math.random()*c.length)];}
+  document.getElementById('secE').value=r;
+  window.toast.show('🎲 تم التوليد — احتفظ بالرمز في مكان آمن!','warning',4000);
+}
+
+async function secCopy() {
+  const v=document.getElementById('secE').value;
+  if(!v){window.toast.show('⚠ لا يوجد رمز','warning');return;}
   try {
-    const q = await window.dbManager.get('settings', 'recoveryQuestion');
-    document.getElementById('recoveryQuestion').value = q?.value || '';
-  } catch(e) { document.getElementById('recoveryQuestion').value = ''; }
-
-  document.getElementById('recoveryAnswer').value = '';
-  document.getElementById('emergencyCode').value  = '';
-  window.modalManager.open('recoverySetupModal');
+    await navigator.clipboard.writeText(v);
+    const btn=document.getElementById('secCopyBtn');
+    btn.innerHTML='<i class="fa-solid fa-check"></i>'; btn.style.color='var(--success)';
+    setTimeout(()=>{btn.innerHTML='<i class="fa-regular fa-copy"></i>'; btn.style.color='';},2000);
+    window.toast.show('✅ تم نسخ الرمز','success');
+  } catch(_){window.toast.show('❌ فشل النسخ — انسخ يدوياً','error');}
 }
 
-function generateEmergencyCode() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = '';
-  for (let i = 0; i < 16; i++) {
-    if (i > 0 && i % 4 === 0) code += '-';
-    code += chars[Math.floor(Math.random() * chars.length)];
-  }
-  document.getElementById('emergencyCode').value = code;
-  window.toast.show('📋 تم توليد الرمز — احتفظ به في مكان آمن!', 'warning', 4000);
-}
-
-async function saveRecoverySetup() {
-  const question = document.getElementById('recoveryQuestion').value.trim();
-  const answer   = document.getElementById('recoveryAnswer').value.trim();
-  const code     = document.getElementById('emergencyCode').value.trim();
-
-  if (!question) { window.toast.show('سؤال الأمان مطلوب', 'warning'); return; }
-  if (!answer)   { window.toast.show('إجابة سؤال الأمان مطلوبة', 'warning'); return; }
-
+async function secSave() {
+  const q=document.getElementById('secQ').value.trim(), a=document.getElementById('secA').value.trim(), e=document.getElementById('secE').value.trim();
+  if(!q){window.toast.show('⚠ يرجى كتابة سؤال الأمان','warning');document.getElementById('secQ').focus();return;}
+  if(!a){window.toast.show('⚠ يرجى كتابة إجابة السؤال','warning');document.getElementById('secA').focus();return;}
   try {
-    // حفظ السؤال كنص عادي
-    await window.dbManager.put('settings', { key: 'recoveryQuestion', value: question });
-    // تشفير الإجابة
-    const hashedAnswer = await window.passwordManager.hash(answer.toLowerCase());
-    await window.dbManager.put('settings', { key: 'recoveryAnswer', value: hashedAnswer });
-    // رمز الطوارئ (نص عادي — يعرفه المدير فقط)
-    if (code) {
-      await window.dbManager.put('settings', { key: 'emergencyCode', value: code });
-    }
-
-    await window.dbManager.add('logs', {
-      action: 'user',
-      userId: currentUser?.id,
-      details: 'إعداد سؤال الاسترداد للمدير',
-      date: window.dateUtils.now()
-    });
-
-    window.modalManager.close('recoverySetupModal');
-    window.toast.show('✅ تم حفظ إعدادات الاسترداد بنجاح', 'success');
-  } catch(e) {
-    window.toast.show('فشل في حفظ إعدادات الاسترداد', 'error');
-  }
+    await window.dbManager.put('settings',{key:'recoveryQuestion',value:q});
+    await window.dbManager.put('settings',{key:'recoveryAnswer',value:await window.passwordManager.hash(a.toLowerCase())});
+    if(e) await window.dbManager.put('settings',{key:'emergencyCode',value:e.replace(/-/g,'')});
+    await window.dbManager.add('logs',{action:'user',userId:currentUser?.id,details:'تحديث إعدادات الأمان',date:window.dateUtils.now()});
+    window.toast.show('✅ تم حفظ إعدادات الأمان','success');
+    await secRefresh();
+  } catch(err){window.toast.show('❌ فشل في الحفظ','error');}
 }
-
-// الدوال القديمة للتوافق
-function checkNewPasswordStrength() { checkChangePwdStrength(); }
-function checkNewPasswordMatch()    { checkChangePwdMatch(); }
-async function changeAdminPassword(){ await saveChangedPassword(); }
 
 // ============================================================
 //  سجل النشاطات
