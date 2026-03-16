@@ -297,6 +297,170 @@
       margin-top: 8px;
     }
 
+    .forgot-link {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: color 0.2s;
+      text-decoration: none;
+    }
+    .forgot-link:hover {
+      color: var(--primary-light);
+      text-decoration: underline;
+    }
+
+    /* ===== Forgot Password Modal ===== */
+    .fp-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .fp-modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .fp-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 420px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      transform: translateY(20px);
+      transition: transform 0.25s;
+    }
+    .fp-modal-overlay.open .fp-modal {
+      transform: translateY(0);
+    }
+    .fp-modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(139,92,246,0.08));
+    }
+    .fp-modal-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--primary-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fp-modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .fp-modal-close:hover { color: var(--danger); background: rgba(239,68,68,0.1); }
+    .fp-modal-body {
+      padding: 24px;
+    }
+    .fp-step {
+      display: none;
+    }
+    .fp-step.active {
+      display: block;
+      animation: fadeInUp 0.25s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fp-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+      display: block;
+    }
+    .fp-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .fp-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,0.15); }
+    .fp-select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      padding: 10px 14px;
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      outline: none;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .fp-form-group { margin-bottom: 16px; }
+    .fp-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 6px;
+    }
+    .fp-btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(124,58,237,0.3);
+    }
+    .fp-btn-primary:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    .fp-info-box {
+      background: rgba(124,58,237,0.08);
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .fp-info-box.warning {
+      background: rgba(245,158,11,0.08);
+      border-color: rgba(245,158,11,0.25);
+    }
+    .fp-info-box.success {
+      background: rgba(16,185,129,0.08);
+      border-color: rgba(16,185,129,0.25);
+      color: #10b981;
+    }
+    .fp-error { color: var(--danger); font-size: 0.82rem; margin-top: 8px; min-height: 20px; font-weight: 600; }
+    .fp-strength { font-size: 0.75rem; margin-top: 5px; }
+
     .sidebar,
     .sidebar-overlay {
       display: none !important;
@@ -369,12 +533,127 @@
           <!-- رسائل الخطأ -->
           <div class="error-msg" id="errorMsg"></div>
           <div class="login-attempts" id="attemptsMsg"></div>
+          
+          <!-- نسيت الرقم السري -->
+          <a class="forgot-link" onclick="openForgotModal()">
+            🔑 نسيت الرقم السري؟
+          </a>
         </form>
       </div>
 
       <!-- تذييل -->
       <div class="card-footer">
         <p>POS DZ v8.0.0 &nbsp;|&nbsp; 2026 POS DZ — جميع الحقوق محفوظة ®</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Modal: نسيت الرقم السري ===== -->
+  <div class="fp-modal-overlay" id="fpOverlay">
+    <div class="fp-modal">
+      <div class="fp-modal-header">
+        <span class="fp-modal-title">
+          <i class="fa-solid fa-key"></i> إعادة تعيين الرقم السري
+        </span>
+        <button class="fp-modal-close" onclick="closeForgotModal()">✕</button>
+      </div>
+      <div class="fp-modal-body">
+
+        <!-- الخطوة 1: اختيار المستخدم -->
+        <div class="fp-step active" id="fp-step1">
+          <div class="fp-info-box">
+            <strong>⚠️ نسيت رقمك السري؟</strong><br>
+            اختر اسم المستخدم ثم اتبع تعليمات الاسترداد المناسبة لصلاحيتك.
+          </div>
+          <div class="fp-form-group">
+            <label class="fp-label">👤 اسم المستخدم</label>
+            <select class="fp-select" id="fpUserSelect">
+              <option value="">-- اختر المستخدم --</option>
+            </select>
+          </div>
+          <div class="fp-error" id="fp-err1"></div>
+          <button class="fp-btn fp-btn-primary" onclick="fpStep1Next()">
+            متابعة <i class="fa-solid fa-arrow-left"></i>
+          </button>
+        </div>
+
+        <!-- الخطوة 2A: مستخدم غير مدير → تواصل مع المدير -->
+        <div class="fp-step" id="fp-step2a">
+          <div class="fp-info-box warning">
+            <strong>🔒 استرداد كلمة المرور للبائع / المدير المساعد</strong><br><br>
+            لا يمكنك إعادة تعيين كلمة مرورك بمفردك.<br>
+            يرجى <strong>التواصل مع المدير الرئيسي (Admin)</strong> حتى يقوم بإعادة تعيين كلمة المرور من صفحة <em>إدارة المستخدمين</em>.
+          </div>
+          <div class="fp-info-box" style="margin-bottom:0; font-size:0.8rem;">
+            <strong>📋 الخطوات للمدير:</strong><br>
+            ١. اذهب إلى <strong>إدارة المستخدمين</strong><br>
+            ٢. اضغط <strong>تغيير كلمة المرور</strong> على بطاقة المستخدم<br>
+            ٣. أدخل كلمة المرور الجديدة وأكّدها
+          </div>
+          <button class="fp-btn fp-btn-primary" style="margin-top:16px;" onclick="closeForgotModal()">
+            <i class="fa-solid fa-check"></i> حسناً، فهمت
+          </button>
+        </div>
+
+        <!-- الخطوة 2B: المدير → سؤال الاسترداد -->
+        <div class="fp-step" id="fp-step2b">
+          <div class="fp-info-box" id="fp-question-box"></div>
+          <div class="fp-form-group">
+            <label class="fp-label">💡 إجابة سؤال الاسترداد</label>
+            <input type="text" class="fp-input" id="fpAnswer" 
+                   placeholder="أدخل إجابتك هنا" autocomplete="off"/>
+          </div>
+          <div class="fp-error" id="fp-err2b"></div>
+          <button class="fp-btn fp-btn-primary" onclick="fpVerifyAnswer()">
+            التحقق من الإجابة <i class="fa-solid fa-shield-check"></i>
+          </button>
+        </div>
+
+        <!-- الخطوة 2C: لا يوجد سؤال استرداد -->
+        <div class="fp-step" id="fp-step2c">
+          <div class="fp-info-box warning">
+            <strong>⚠️ لم يتم إعداد سؤال الاسترداد</strong><br><br>
+            لم يتم تكوين سؤال الأمان لحساب المدير بعد.<br>
+            <strong>الحل:</strong> اذهب إلى <em>إدارة المستخدمين ← إعداد سؤال الاسترداد</em> وقم بضبطه.
+          </div>
+          <div class="fp-info-box" style="font-size:0.8rem; margin-bottom:0;">
+            <strong>🛠️ خيار الطوارئ:</strong><br>
+            إذا كنت لا تتذكر الرقم السري نهائياً، يمكنك استخدام <strong>رمز الطوارئ</strong> الذي تم توليده عند إنشاء الحساب لأول مرة (إن وُجد).
+          </div>
+          <div class="fp-form-group" style="margin-top:16px;">
+            <label class="fp-label">🔐 رمز الطوارئ (Emergency Code)</label>
+            <input type="text" class="fp-input" id="fpEmergencyCode" 
+                   placeholder="أدخل رمز الطوارئ"/>
+          </div>
+          <div class="fp-error" id="fp-err2c"></div>
+          <button class="fp-btn fp-btn-primary" onclick="fpVerifyEmergency()">
+            التحقق <i class="fa-solid fa-unlock"></i>
+          </button>
+        </div>
+
+        <!-- الخطوة 3: إدخال كلمة المرور الجديدة -->
+        <div class="fp-step" id="fp-step3">
+          <div class="fp-info-box success">
+            ✅ تم التحقق بنجاح! يمكنك الآن تعيين رقم سري جديد.
+          </div>
+          <div class="fp-form-group">
+            <label class="fp-label">🔑 الرقم السري الجديد</label>
+            <input type="password" class="fp-input" id="fpNewPass"
+                   placeholder="أدخل الرقم السري الجديد"
+                   oninput="fpCheckStrength()"/>
+            <div class="fp-strength" id="fpStrength"></div>
+          </div>
+          <div class="fp-form-group">
+            <label class="fp-label">🔑 تأكيد الرقم السري</label>
+            <input type="password" class="fp-input" id="fpNewPassConfirm"
+                   placeholder="أعد إدخال الرقم السري"/>
+          </div>
+          <div class="fp-error" id="fp-err3"></div>
+          <button class="fp-btn fp-btn-primary" onclick="fpSaveNewPassword()">
+            <i class="fa-solid fa-floppy-disk"></i> حفظ الرقم السري الجديد
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -823,11 +1102,190 @@
       }
     });
 
-    // تصدير الدوال العامة
+    // تصدير الدوار العامة
     window.doLogin = doLogin;
     window.togglePassword = togglePassword;
     window.vkbPress = vkbPress;
     window.vkbClose = vkbClose;
+
+    // ══════════════════════════════════════════════════════════════
+    //  نظام استرداد كلمة المرور (Forgot Password)
+    // ══════════════════════════════════════════════════════════════
+    let fpTargetUser = null;
+
+    async function openForgotModal() {
+      fpTargetUser = null;
+      // إعادة تعيين الخطوات
+      showFpStep('fp-step1');
+      document.getElementById('fpUserSelect').value = '';
+      document.getElementById('fp-err1').textContent = '';
+      document.getElementById('fpAnswer').value = '';
+      document.getElementById('fpNewPass').value = '';
+      document.getElementById('fpNewPassConfirm').value = '';
+      document.getElementById('fpStrength').textContent = '';
+      document.getElementById('fp-err3').textContent = '';
+      
+      // تحميل المستخدمين في قائمة الاسترداد
+      const users = await window.dbManager.getAll('users');
+      const sel = document.getElementById('fpUserSelect');
+      sel.innerHTML = '<option value="">-- اختر المستخدم --</option>';
+      users.sort((a,b) => a.username.localeCompare(b.username));
+      users.forEach(u => {
+        const opt = document.createElement('option');
+        opt.value = u.id;
+        const icon = u.role === 'admin' ? '👑' : u.role === 'manager' ? '🛡️' : '👤';
+        opt.textContent = icon + ' ' + u.username;
+        sel.appendChild(opt);
+      });
+      
+      // تحديد المستخدم المختار مسبقاً
+      const selected = document.getElementById('usernameSelect').value;
+      if (selected) {
+        const match = users.find(u => u.username === selected);
+        if (match) sel.value = match.id;
+      }
+      
+      document.getElementById('fpOverlay').classList.add('open');
+    }
+
+    function closeForgotModal() {
+      document.getElementById('fpOverlay').classList.remove('open');
+    }
+
+    function showFpStep(stepId) {
+      document.querySelectorAll('.fp-step').forEach(s => s.classList.remove('active'));
+      document.getElementById(stepId).classList.add('active');
+    }
+
+    async function fpStep1Next() {
+      const selVal = document.getElementById('fpUserSelect').value;
+      if (!selVal) {
+        document.getElementById('fp-err1').textContent = '⚠️ يرجى اختيار المستخدم';
+        return;
+      }
+      document.getElementById('fp-err1').textContent = '';
+      
+      const users = await window.dbManager.getAll('users');
+      fpTargetUser = users.find(u => u.id === parseInt(selVal));
+      
+      if (!fpTargetUser) {
+        document.getElementById('fp-err1').textContent = '❌ المستخدم غير موجود';
+        return;
+      }
+      
+      if (fpTargetUser.role !== 'admin') {
+        // غير مدير → أخبره بمراجعة المدير
+        showFpStep('fp-step2a');
+      } else {
+        // مدير → تحقق من وجود سؤال استرداد
+        const q = await window.dbManager.get('settings', 'recoveryQuestion');
+        if (q && q.value) {
+          document.getElementById('fp-question-box').innerHTML =
+            `<strong>❓ سؤال الأمان:</strong><br>${window.sanitizer ? window.sanitizer.escape(q.value) : q.value}`;
+          document.getElementById('fp-err2b').textContent = '';
+          showFpStep('fp-step2b');
+        } else {
+          document.getElementById('fp-err2c').textContent = '';
+          document.getElementById('fpEmergencyCode').value = '';
+          showFpStep('fp-step2c');
+        }
+      }
+    }
+
+    async function fpVerifyAnswer() {
+      const answer = document.getElementById('fpAnswer').value.trim();
+      if (!answer) {
+        document.getElementById('fp-err2b').textContent = '⚠️ يرجى إدخال الإجابة';
+        return;
+      }
+      
+      const stored = await window.dbManager.get('settings', 'recoveryAnswer');
+      if (!stored) {
+        document.getElementById('fp-err2b').textContent = '❌ لم يتم إعداد الإجابة';
+        return;
+      }
+      
+      // مقارنة الإجابة (غير حساسة لحالة الأحرف)
+      const isValid = await window.passwordManager.verify(answer.toLowerCase(), stored.value);
+      if (isValid) {
+        showFpStep('fp-step3');
+      } else {
+        document.getElementById('fp-err2b').textContent = '❌ الإجابة غير صحيحة';
+      }
+    }
+
+    async function fpVerifyEmergency() {
+      const code = document.getElementById('fpEmergencyCode').value.trim();
+      if (!code) {
+        document.getElementById('fp-err2c').textContent = '⚠️ يرجى إدخال رمز الطوارئ';
+        return;
+      }
+      
+      const stored = await window.dbManager.get('settings', 'emergencyCode');
+      if (!stored) {
+        document.getElementById('fp-err2c').textContent = '❌ لم يتم تعيين رمز طوارئ';
+        return;
+      }
+      
+      if (code === stored.value) {
+        showFpStep('fp-step3');
+      } else {
+        document.getElementById('fp-err2c').textContent = '❌ رمز الطوارئ غير صحيح';
+      }
+    }
+
+    function fpCheckStrength() {
+      const p = document.getElementById('fpNewPass').value;
+      const el = document.getElementById('fpStrength');
+      if (!p) { el.textContent = ''; return; }
+      let s = 0;
+      if (p.length >= 6) s++;
+      if (p.match(/[a-zA-Z]/)) s++;
+      if (p.match(/[0-9]/)) s++;
+      if (p.match(/[^a-zA-Z0-9]/)) s++;
+      const labels = ['', '🔴 ضعيفة', '🟡 متوسطة', '🟢 جيدة', '🟢 قوية جداً'];
+      el.textContent = 'القوة: ' + (labels[s] || labels[1]);
+    }
+
+    async function fpSaveNewPassword() {
+      const pass = document.getElementById('fpNewPass').value;
+      const conf = document.getElementById('fpNewPassConfirm').value;
+      const errEl = document.getElementById('fp-err3');
+      
+      if (!pass) { errEl.textContent = '⚠️ يرجى إدخال الرقم السري الجديد'; return; }
+      if (pass.length < 4) { errEl.textContent = '⚠️ الرقم السري قصير جداً (4 أحرف على الأقل)'; return; }
+      if (pass !== conf) { errEl.textContent = '❌ الرقم السري غير متطابق'; return; }
+      
+      try {
+        fpTargetUser.password = await window.passwordManager.hash(pass);
+        fpTargetUser.updatedAt = new Date().toISOString();
+        await window.dbManager.put('users', fpTargetUser);
+        
+        closeForgotModal();
+        window.toast.show('✅ تم تغيير الرقم السري بنجاح! يمكنك الدخول الآن.', 'success', 3000);
+        
+        // تحديد المستخدم تلقائياً
+        document.getElementById('usernameSelect').value = fpTargetUser.username;
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+        
+      } catch(e) {
+        errEl.textContent = '❌ حدث خطأ أثناء الحفظ';
+      }
+    }
+
+    // إغلاق بالنقر على الخلفية
+    document.getElementById('fpOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeForgotModal();
+    });
+
+    window.openForgotModal = openForgotModal;
+    window.closeForgotModal = closeForgotModal;
+    window.fpStep1Next = fpStep1Next;
+    window.fpVerifyAnswer = fpVerifyAnswer;
+    window.fpVerifyEmergency = fpVerifyEmergency;
+    window.fpCheckStrength = fpCheckStrength;
+    window.fpSaveNewPassword = fpSaveNewPassword;
   </script>
 </body>
 </html>
